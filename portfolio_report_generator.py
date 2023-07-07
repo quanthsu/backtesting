@@ -40,42 +40,20 @@ portfolio_intraday_init_asset = float(config['portfolio_threshold']['portfolio_i
 
 from backtesting.strategy import Strategy
 from backtesting.portfolio import Portfolio_intraday, Portfolio_interday, Portfolio
-
-portfolio_interday_paths = glob.glob('./portfolio_interday/' + '*' + file_type)
-portfolio_intraday_paths = glob.glob('./portfolio_intraday/' + '*' + file_type)
+from backtesting.portfolio import portfolio_generator
 
 if __name__ == '__main__':
 
-    portfolio_cols = []
-    if portfolio_intraday_paths:
-        print('\r Preparing intraday ...', end = '', flush=True)
-        portfolio_intraday = Portfolio_intraday(name = 'portfolio_intraday', portfolio_intraday_init_asset = portfolio_intraday_init_asset, portfolio_path = portfolio_intraday_paths)
-        portfolio_intraday.get_plotly_html()
-        portfolio_cols += portfolio_intraday.portfolio_cols
-        portfolio_df = portfolio_intraday.daily_report
-        portfolio_trading_record_df = portfolio_intraday.tradingRecords
-
-    if portfolio_interday_paths:
-        print('\r Preparing interday ...')
-        portfolio_interday = Portfolio_interday(name = 'portfolio_interday', portfolio_path = portfolio_interday_paths)
-        portfolio_interday.get_plotly_html()
-        portfolio_cols += portfolio_interday.portfolio_cols
-        portfolio_df = portfolio_interday.daily_report
-        portfolio_trading_record_df = portfolio_interday.tradingRecords
-
-    if portfolio_intraday_paths and portfolio_interday_paths:
-        portfolio_df = pd.merge(portfolio_intraday.daily_report, portfolio_interday.daily_report, on=['Date'], how='outer')
-        portfolio_df = portfolio_df.sort_values(by = ['Date']).reset_index(drop=True)
-        portfolio_trading_record_df = pd.concat([portfolio_intraday.tradingRecords, portfolio_interday.tradingRecords]).sort_values(by = ['inDate']).reset_index(drop=True)
-    
-    portfolio = Portfolio(portfolio_report = portfolio_df, portfolio_trading_record = portfolio_trading_record_df, portfolio_cols = portfolio_cols)
+    portfolio, portfolio_df, portfolio_trading_record_df, portfolio_cols = portfolio_generator('portfolio', 'portfolio_interday', 'portfolio_intraday', tcri_limit=False)
+    portfolio_tcri, portfolio_df_tcri, portfolio_trading_record_df_tcri, portfolio_cols_tcri = portfolio_generator('portfolio_TCRI', 'portfolio_interday_TCRI', 'portfolio_intraday_TCRI', tcri_limit=True)
 
     #print('\r Generating intraday report ...', end = '', flush=True)
     #print('\r Generating interday report ...', end = '', flush=True)
     
     print('\r Generating portfolio report ...')
     portfolio.get_plotly_html()
-    
+    portfolio_tcri.get_plotly_html()
+
     print('Complete ! ')
 
     os.system("pause")

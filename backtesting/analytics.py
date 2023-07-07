@@ -93,7 +93,8 @@ class Analytics(object):
             in_datetime = datetime(date.year, date.month, date.day, 13, 30)
 
             #dailyHoldingRecrods = tradingRecords_nums[(tradingRecords_nums['inDate'].dt.date <= date) & (tradingRecords_nums['outDate'].dt.date >= date)]
-            trading_period = ((tradingRecords_nums['inDate'] <= in_datetime) & (tradingRecords_nums['outDate'] >= in_datetime)) | pd.isnull(tradingRecords_nums['outDate'])
+            trading_period = ((tradingRecords_nums['inDate'] <= in_datetime) & (tradingRecords_nums['outDate'] > in_datetime )) \
+                    | ((tradingRecords_nums['inDate'] <= in_datetime) & pd.isnull(tradingRecords_nums['outDate']))
             dailyHoldingRecrods = tradingRecords_nums[trading_period]
             
             #numsList.append([date, dailyHoldingRecrods.shape[0]])
@@ -129,9 +130,9 @@ class Analytics(object):
         moneyList = []
         for date in self.date_list:
             in_datetime = datetime(date.year, date.month, date.day, 13, 30) 
-            trading_period = ((tradingRecords['inDate'] <= in_datetime) & (tradingRecords['outDate'] >= in_datetime)) | pd.isnull(tradingRecords['outDate'])
+            trading_period = ((tradingRecords['inDate'] <= in_datetime) & (tradingRecords['outDate'] > in_datetime )) \
+                    | ((tradingRecords['inDate'] <= in_datetime) & pd.isnull(tradingRecords['outDate']))
             dailyHoldingRecrods = tradingRecords[trading_period]
-            
 
             moneyList.append([date, (dailyHoldingRecrods['inPrice'] * dailyHoldingRecrods['trading_number']).sum() * 1000])
         

@@ -98,6 +98,7 @@ def get_tcri_maintain_ratio(strategy_report_paths):
 
 def get_tcri_trading_df(trading_df):
 
+    trading_df = trading_df.copy().reset_index(drop=True)
     tcri_df = get_tcri_df(tcri_risk_path)
     tcri_index = []
 
@@ -110,7 +111,7 @@ def get_tcri_trading_df(trading_df):
         if cur_stock_id not in tcri_stocks:
             tcri_index.append(index)
             
-    return trading_df[trading_df.index.isin(tcri_index)]
+    return trading_df[trading_df.index.isin(tcri_index)].reset_index(drop=True)
 
 
 def get_tcri_compare():

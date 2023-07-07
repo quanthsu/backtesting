@@ -300,7 +300,9 @@ class Plot(object):
         fig_freq = self.get_freq() 
         statDF_show, fig_stat = self.stat()
         
-        with open(self.report_plot_path + f'{self.name}.html', 'w') as f:
+        plot_path = self.report_plot_path + f'{self.name}_TCRI.html' if self.tcri_limit else self.report_plot_path + f'{self.name}.html'
+
+        with open(plot_path, 'w') as f:
             f.write(fig_stat.to_html(full_html=False, include_plotlyjs='cdn'))
             f.write(fig_DD.to_html(full_html=False, include_plotlyjs='cdn'))
             f.write(fig_pos.to_html(full_html=False, include_plotlyjs='cdn'))
